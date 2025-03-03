@@ -18,15 +18,8 @@
 ## インストール方法
 
 ```bash
-# プロジェクトディレクトリを作成し、ファイルを配置
-mkdir ohip-graphql-server
+# サーバーディレクトリに移動
 cd ohip-graphql-server
-
-# 必要なディレクトリ構造を作成
-mkdir public
-
-# ファイルを作成
-# server.js、package.json、public/index.htmlの内容を貼り付け
 
 # 依存関係をインストール
 npm install
