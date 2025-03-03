@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>
+    OHIP GraphiQL Tool (Local Test Server)
+  </title>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-title" content="OHIP GraphiQL Tool">
+
+  <style>
+    html {
+      height: 100%;
+    }
+
+    body {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    footer {
+      background-color: var(--oj-body-bg-color) !important;
+    }
+
+    #graphiql {
+      height: 100vh;
+    }
+
+    .content {
+      margin: 10px;
+    }
+
+    .contentql {
+      margin: 10px;
+      max-height: 60vh;
+    }
+
+    .oracle-ohip-img {
+      height: 45px;
+      margin-left: -15px;
+      margin-bottom: -15px;
+    }
+
+    .errorText {
+      color: rgb(202, 16, 19);
+    }
+
+    .no-flex {
+      flex: none !important;
+    }
+
+    .oj-efficient {
+      min-height: .5rem !important;
+    }
+
+    .oj-lg-1 {
+      flex: 0 1 6.33333% !important
+    }
+
+    .oj-web-applayout-max-width {
+      margin-left: inherit;
+    }
+
+    footer {
+      bottom: 0 !important;
+      width: 100%;
+    }
+  </style>
+  <!--
+      This GraphiQL example depends on Promise and fetch, which are available in
+      modern browsers, but can be "polyfilled" for older browsers.
+      GraphiQL itself depends on React DOM.
+      If you do not want to rely on a CDN, you can host these files locally or
+      include them directly in your favored resource bunder.
+    -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+    integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous">
+    </script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+    integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous">
+    </script>
+
+  <!--
+      These two files can be found in the npm module, however you may wish to
+      copy them directly into your environment, or perhaps include them in your
+      favored resource bundler.
+     -->
+  <link rel="stylesheet" href="https://unpkg.com/graphiql@2.4.4/graphiql.min.css"
+    integrity="sha384-bDTFQgKNxWynU0y6JPt0KD1Yr1W+MoFfKOlyRp0a4pQPMhtYmP5dw1lSDqK29OZy" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://static.oracle.com/cdn/jet/14.0.0/default/css/redwood/oj-redwood-min.css"
+    integrity="sha384-S7LL1ehauhHEBSSQW0dVPpwtm11NEMUfiG8MP3AhDFX2sLmHTm5ZiHiYH/yHquN6" crossorigin="anonymous">
+
+  <link rel="stylesheet" id="oraclefont"
+    href="https://static.oracle.com/cdn/fnd/gallery/2107.3.0/OracleFont/OracleFont.min.css"
+    integrity="sha384-56A59SmDZ8QJ6HIgLMg7uhLg2ktDf6gse8+AlYwoGI8besCw/C5vmkRmtUSy8WQS" crossorigin="anonymous">
+
+  <link rel="stylesheet" id="uxiconfont"
+    href="https://static.oracle.com/cdn/fnd/gallery/2107.3.0/images/iconfont/ojuxIconFont.min.css"
+    integrity="sha384-1Bnlygdr8rRLs6tJEyqNeWY6Ym61xOAVSA3EIFri7P2ooz3oTypSjrvuzyb4UjN8" crossorigin="anonymous">
+</head>
+
+<body>
+  <header id="header" role="banner" class="oj-flex-bar oj-sm-align-items-center" style="margin-top: 10px;">
+    <div class="oj-flex-bar-start oj-sm-only-hide oj-flex-item oj-flex oj-sm-flex-direction-column">
+      <span class="oj-flex-item oj-typography-heading-md oj-typography-bold" style="padding-left: 10px">
+        <span class="oj-flex-item oj-start">
+          OHIP GraphiQL Tool (Local Test Server)
+        </span>
+      </span>
+      <span class="oj-md-down-hide oj-flex-item oj-typography-body-sm" style="padding-left: 10px">
+        Local Development Environment
+      </span>
+    </div>
+  </header>
+  <div id="inputs" class="content">
+    <div class="oj-flex">
+      <div class="oj-flex-item oj-lg-6 oj-md-12 oj-sm-12 oj-lg-padding-1x-horizontal oj-md-padding-1x-horizontal oj-sm-padding-1x-horizontal">
+        <label for="urlInput">URL:</label>
+        <input type="text" id="urlInput" value="ws://localhost:4000" style="width: 100%;">
+      </div>
+      <div class="oj-flex-item oj-lg-6 oj-md-12 oj-sm-12 oj-lg-padding-1x-horizontal oj-md-padding-1x-horizontal oj-sm-padding-1x-horizontal">
+        <label for="socketKeyInput">Socket Key:</label>
+        <input type="text" id="socketKeyInput" value="" disabled style="width: 100%;">
+      </div>
+      <div class="oj-flex-item oj-lg-6 oj-md-12 oj-sm-12 oj-lg-padding-1x-horizontal oj-md-padding-1x-horizontal oj-sm-padding-1x-horizontal">
+        <label for="authTokenInput">Auth Token:</label>
+        <input type="text" id="authTokenInput" value="test-auth-token" style="width: 100%;">
+      </div>
+      <div class="oj-flex-item oj-lg-6 oj-md-12 oj-sm-12 oj-lg-padding-1x-horizontal oj-md-padding-1x-horizontal oj-sm-padding-1x-horizontal">
+        <label for="apiKeyInput">API Key:</label>
+        <input type="password" id="apiKeyInput" value="test-api-key" style="width: 100%;">
+      </div>
+      <div class="oj-flex-item" style="margin-top: 10px;">
+        <button id="startButton">Start</button>
+        <button id="clearButton" style="margin-left: 10px;">Clear</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div id="errorMessage" class="content" style="display: none;"></div>
+  <div id="graphiql" class="contentql" style="display: none;"></div>
+  <footer style="height:5vh; padding: 10px; margin-top: auto;">
+    <div style="display: flex; justify-content: space-between;">
+      <div>
+        Local Test Server for OHIP GraphiQL Tool
+      </div>
+      <div>
+        <ul style="list-style: none; display: flex; gap: 10px; margin: 0; padding: 0;">
+          <li>Local Development Server</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/graphiql@2.4.4/graphiql.min.js"
+    integrity="sha384-3Bty39kXmxJMPp4NJBsd6zHKfrbkpUnzEyP2VnRxgTMMYT6NvnHY5mS0t/demxvG" crossorigin="anonymous">
+    </script>
+  <script src="https://unpkg.com/graphql-ws@5.11.3/umd/graphql-ws.min.js"
+    integrity="sha384-feJxEM01WQlyLaGAB0QL5DOUKuU09DpeEd/dDVEJnqL/Z4B0vqq5bMJ4DUIsM2Jz" crossorigin="anonymous">
+    </script>
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get DOM elements
+      const urlInput = document.getElementById('urlInput');
+      const socketKeyInput = document.getElementById('socketKeyInput');
+      const authTokenInput = document.getElementById('authTokenInput');
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      const startButton = document.getElementById('startButton');
+      const clearButton = document.getElementById('clearButton');
+      const errorMessages = document.getElementById('errorMessage');
+      const graphiQLWindow = document.getElementById('graphiql');
+
+      // Load saved values from storage if available
+      if (localStorage.getItem("ohipAsyncUrl")) {
+        urlInput.value = localStorage.getItem("ohipAsyncUrl");
+      }
+      if (sessionStorage.getItem("ohipAsyncSocketKey")) {
+        socketKeyInput.value = sessionStorage.getItem("ohipAsyncSocketKey");
+      }
+      if (sessionStorage.getItem("ohipAsyncApiKey")) {
+        apiKeyInput.value = sessionStorage.getItem("ohipAsyncApiKey");
+      }
+      if (sessionStorage.getItem("ohipAsyncAuthToken")) {
+        authTokenInput.value = sessionStorage.getItem("ohipAsyncAuthToken");
+      }
+
+      // Generate SHA-256 hash for apiKey
+      async function generateHash(apiKey) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(apiKey);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+      }
+
+      // Clear inputs and storage
+      clearButton.addEventListener('click', function() {
+        urlInput.value = "ws://localhost:4000";
+        socketKeyInput.value = "";
+        authTokenInput.value = "test-auth-token";
+        apiKeyInput.value = "test-api-key";
+        localStorage.removeItem("ohipAsyncUrl");
+        sessionStorage.removeItem("ohipAsyncSocketKey");
+        sessionStorage.removeItem("ohipAsyncApiKey");
+        sessionStorage.removeItem("ohipAsyncAuthToken");
+        errorMessages.innerText = "";
+        errorMessages.style.display = "none";
+        graphiQLWindow.style.display = "none";
+      });
+
+      // Start connection
+      startButton.addEventListener('click', async function() {
+        let url = urlInput.value;
+        const authToken = authTokenInput.value;
+        const apiKey = apiKeyInput.value;
+
+        if (!url || !authToken || !apiKey) {
+          alert("Please fill all text boxes");
+          return;
+        }
+
+        // Normalize URL
+        if (url.indexOf("/subscriptions") !== -1) {
+          url = url.substring(0, url.indexOf("/subscriptions"));
+        }
+
+        if (url.endsWith("/")) {
+          url = url.substring(0, url.length - 1);
+        }
+
+        // Update URL input
+        urlInput.value = url;
+
+        // Save values to storage
+        localStorage.setItem("ohipAsyncUrl", url);
+        sessionStorage.setItem("ohipAsyncApiKey", apiKey);
+        sessionStorage.setItem("ohipAsyncAuthToken", authToken);
+
+        // Generate and save socket key
+        const socketKey = await generateHash(apiKey);
+        sessionStorage.setItem("ohipAsyncSocketKey", socketKey);
+        socketKeyInput.value = socketKey;
+
+        // Verify connection
+        verifyConnection(url, socketKey, apiKey, authToken);
+      });
+
+      // Verify connection to WebSocket server
+      function verifyConnection(url, socketKey, apiKey, authToken) {
+        graphiQLWindow.style.display = "none";
+        errorMessages.style.display = "none";
+
+        let testWsDispose;
+
+        const wsClientTest = graphqlWs.createClient({
+          url: `${url}/subscriptions?key=${socketKey}`,
+          lazy: true,
+          keepAlive: 10000,
+          connectionParams: async () => {
+            return {
+              "Authorization": `Bearer ${authToken}`,
+              "x-app-key": `${apiKey}`
+            };
+          },
+          on: {
+            connected: (socket) => {
+              errorMessages.style.display = "none";
+              graphiQLWindow.style.display = "block";
+              if (testWsDispose) {
+                testWsDispose();
+                loadGraphiQL(url, socketKey, apiKey, authToken);
+              } else {
+                wsClientTest.dispose().then(() => {
+                  loadGraphiQL(url, socketKey, apiKey, authToken);
+                });
+              }
+            },
+            error: (err) => {
+              errorMessages.innerHTML = `<p class="errorText">Error: Unexpected server response: 400 - Incorrect key or URL</p>`;
+              errorMessages.style.display = "block";
+              graphiQLWindow.style.display = "none";
+              if (testWsDispose) {
+                testWsDispose();
+              } else {
+                wsClientTest.dispose();
+              }
+            },
+            closed: (event) => {
+              if (event.code === 4401) {
+                errorMessages.innerHTML = `<p class="errorText">4401 Error: Unauthorised - Invalid credentials - Invalid Auth Token / API Key credentials.</p>`;
+                errorMessages.style.display = "block";
+                graphiQLWindow.style.display = "none";
+                if (testWsDispose) {
+                  testWsDispose();
+                } else {
+                  wsClientTest.dispose();
+                }
+              }
+            }
+          }
+        });
+
+        testWsDispose = wsClientTest.subscribe({
+          query: `subscription { __typename }`
+        }, {
+          next: () => {},
+          error: () => {},
+          complete: () => {}
+        });
+      }
+
+      // Load GraphiQL interface
+      function loadGraphiQL(url, socketKey, apiKey, authToken) {
+        let customError = {};
+        let dispose;
+
+        const wsClient = graphqlWs.createClient({
+          url: `${url}/subscriptions?key=${socketKey}`,
+          lazy: true,
+          keepAlive: 10000,
+          connectionParams: async () => {
+            return {
+              "Authorization": `Bearer ${authToken}`,
+              "x-app-key": `${apiKey}`
+            };
+          },
+          on: {
+            connected: () => {
+              customError.message = "";
+            },
+            closed: (event) => {
+              customError.message = `Socket closed with event ${event.code} ${event.reason}`;
+              if (dispose) {
+                dispose();
+              }
+            }
+          }
+        });
+
+        function subscribe(payload) {
+          let deferred = null;
+          const pending = [];
+          let throwMe = null,
+            done = false;
+
+          dispose = wsClient.subscribe(payload, {
+            next: (data) => {
+              pending.push(data);
+              deferred?.resolve(false);
+            },
+            error: (err) => {
+              if (err instanceof Error) {
+                throwMe = err;
+              } else if (err instanceof CloseEvent) {
+                throwMe = new Error(
+                  `Socket closed with event ${err.code} ${err.reason || ""}`
+                );
+              } else {
+                // GraphQLError[]
+                throwMe = new Error(err.map(({ message }) => message).join(", "));
+              }
+              deferred?.reject({
+                message: throwMe.message
+              });
+            },
+            complete: () => {
+              done = true;
+              if (customError && customError.message) {
+                deferred?.reject(customError);
+              } else {
+                deferred?.resolve(true);
+              }
+            },
+          });
+
+          return {
+            [Symbol.asyncIterator]() {
+              return this;
+            },
+            async next() {
+              if (done) return { done: true, value: undefined };
+              if (throwMe) throw throwMe;
+              if (pending.length) return { value: pending.shift() };
+              return (await new Promise(
+                (resolve, reject) => (deferred = { resolve, reject })
+              ))
+                ? { done: true, value: undefined }
+                : { value: pending.shift() };
+            },
+            async return() {
+              dispose();
+              return { done: true, value: undefined };
+            },
+          };
+        }
+
+        ReactDOM.render(
+          React.createElement(GraphiQL, {
+            fetcher: subscribe,
+            defaultVariableEditorOpen: false,
+            docExplorerOpen: true,
+            response:
+              `{
+  "greeting": "Welcome to the Local OHIP GraphiQL Tool!",
+  "message": "Connected successfully to the local test server."
+}`,
+            defaultQuery:
+              `# Welcome to the Local OHIP GraphiQL Tool
+#
+# Auto Complete Reminder:  Ctrl-Space (or just start typing)
+#
+# Example Subscription:
+#
+subscription {
+  newEvent(input: { chainCode: "OHIPCN" }) {
+    metadata {
+      offset
+      uniqueEventId
+    }
+    moduleName
+    eventName
+    detail {
+      elementName
+      newValue
+      oldValue
+    }
+  }
+}
+
+# Or run this query to get help:
+#
+# query {
+#   getHelp {
+#     overview
+#     configuration
+#     connection {
+#       help
+#       errors
+#     }
+#     events {
+#       payload
+#       replaying
+#     }
+#     slack
+#     email
+#   }
+# }
+`
+          }),
+          document.getElementById('graphiql'),
+        );
+      }
+
+      // Auto-connect if we have all the required information
+      if (urlInput.value && authTokenInput.value && apiKeyInput.value) {
+        startButton.click();
+      }
+    });
+  </script>
+</body>
+
+</html>
